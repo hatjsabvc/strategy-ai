@@ -2,8 +2,13 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
+
 app.use(express.json());
 app.use(cors());
+
+app.get("/", (req, res) => {
+  res.send("Server is working");
+});
 
 app.post("/ask", async (req, res) => {
   const userMessage = req.body.message;
@@ -13,7 +18,7 @@ app.post("/ask", async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer YOUR_OPENAI_API_KEY"
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
@@ -25,12 +30,18 @@ app.post("/ask", async (req, res) => {
     });
 
     const data = await response.json();
-    res.json({ reply: data.choices[0].message.content });
+
+    res.json({
+      reply: data.choices?.[0]?.message?.content || "No response"
+    });
+
   } catch (err) {
     res.json({ reply: "Error: " + err.message });
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server is running!");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
