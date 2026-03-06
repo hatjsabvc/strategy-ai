@@ -37,25 +37,21 @@ app.post("/ask", async (req, res) => {
 
     const data = await response.json();
 
-    if (!data.choices) {
-      console.log("Groq error:", data);
-      return res.json({ reply: "AI error" });
-    }
-
     res.json({
-      reply: data.choices[0].message.content
+      reply: data.choices?.[0]?.message?.content || "AI error"
     });
 
   } catch (err) {
-    console.log("Server error:", err);
-    res.json({
-      reply: "AI error"
-    });
+    console.log(err);
+    res.json({ reply: "AI error" });
   }
 });
 
 const PORT = process.env.PORT || 3000;
 
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
+});
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });
