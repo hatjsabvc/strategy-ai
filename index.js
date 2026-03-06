@@ -26,8 +26,7 @@ app.post("/ask", async (req, res) => {
   messages: [
     { role: "system", content: "You are a helpful Roblox NPC assistant." },
     { role: "user", content: userMessage }
-  ]
-})
+  ],
         ],
         temperature: 0.7
       })
