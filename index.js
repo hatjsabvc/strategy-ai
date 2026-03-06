@@ -22,10 +22,12 @@ app.post("/ask", async (req, res) => {
         "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: "llama3-8b-8192",
-        messages: [
-          { role: "system", content: "You are a helpful Roblox NPC assistant." },
-          { role: "user", content: userMessage }
+  model: "llama-3.1-8b-instant",
+  messages: [
+    { role: "system", content: "You are a helpful Roblox NPC assistant." },
+    { role: "user", content: userMessage }
+  ]
+})
         ],
         temperature: 0.7
       })
