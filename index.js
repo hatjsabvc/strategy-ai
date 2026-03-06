@@ -31,6 +31,7 @@ app.post("/ask", async (req, res) => {
       })
     });
 
+
     const data = await response.json();
 
     console.log(data); // чтобы видеть ошибки в Railway
