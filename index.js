@@ -6,27 +6,22 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Проверка что сервер жив
 app.get("/", (req, res) => {
-  res.send("Server is working");
+  res.send("AI server working");
 });
 
 app.post("/ask", async (req, res) => {
   const userMessage = req.body.message;
 
-  if (!userMessage) {
-    return res.json({ reply: "No message provided" });
-  }
-
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "llama3-8b-8192",
         messages: [
           { role: "system", content: "You are a helpful Roblox NPC assistant." },
           { role: "user", content: userMessage }
@@ -36,26 +31,14 @@ app.post("/ask", async (req, res) => {
 
     const data = await response.json();
 
-    console.log("Status:", response.status);
-    console.log("OpenAI Response:", JSON.stringify(data, null, 2));
-
-    if (!response.ok) {
-      return res.json({
-        reply: "OpenAI Error: " + (data.error?.message || "Unknown error")
-      });
-    }
-
-    const aiReply = data.choices?.[0]?.message?.content;
-
-    if (!aiReply) {
-      return res.json({ reply: "No response from model" });
-    }
-
-    res.json({ reply: aiReply });
+    res.json({
+      reply: data.choices?.[0]?.message?.content || "No response"
+    });
 
   } catch (err) {
-    console.error("Server error:", err);
-    res.json({ reply: "Server error: " + err.message });
+    res.json({
+      reply: "Error: " + err.message
+    });
   }
 });
 
