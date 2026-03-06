@@ -14,31 +14,31 @@ app.post("/ask", async (req, res) => {
   const userMessage = req.body.message;
 
   try {
-
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-  model: "llama-3.1-8b-instant",
-  messages: [
-    { role: "system", content: "You are a helpful Roblox NPC assistant." },
-    { role: "user", content: userMessage }
-  ]
-})
-        ],
-        temperature: 0.7
+        model: "llama-3.1-8b-instant",
+        messages: [
+          {
+            role: "system",
+            content: "You are a helpful Roblox NPC assistant."
+          },
+          {
+            role: "user",
+            content: userMessage
+          }
+        ]
       })
     });
 
-
     const data = await response.json();
 
-    console.log(data); // чтобы видеть ошибки в Railway
-
     if (!data.choices) {
+      console.log("Groq error:", data);
       return res.json({ reply: "AI error" });
     }
 
@@ -47,13 +47,10 @@ app.post("/ask", async (req, res) => {
     });
 
   } catch (err) {
-
-    console.log(err);
-
+    console.log("Server error:", err);
     res.json({
-      reply: "Server error"
+      reply: "AI error"
     });
-
   }
 });
 
